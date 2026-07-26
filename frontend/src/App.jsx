@@ -32,15 +32,19 @@ function App() {
               padding: '8px',
               marginBottom: '4px',
               borderRadius: '4px',
-              backgroundColor: log.is_attack_injected ? '#3d1a1a' : '#161b22',
-              borderLeft: log.is_attack_injected ? '4px solid red' : '4px solid green'
+              backgroundColor: log.ai_flagged ? '#3d1a1a' : '#161b22',
+              borderLeft: log.ai_flagged ? '4px solid orange' : '4px solid green'
             }}
           >
-            <strong>{log.is_attack_injected ? `⚠️ ATTACK (${log.attack_type})` : '✅ normal'}</strong>
-            {' | '}src: {log.src_ip}
-            {' | '}service: {log.service}
-            {' | '}flag: {log.flag}
-            {' | '}{new Date(log.timestamp).toLocaleTimeString()}
+            <strong>{log.ai_flagged ? `🤖 AI FLAGGED (score: ${log.anomaly_score})` : '🤖 AI: normal'}</strong>
+          {' | '}
+          <span style={{ color: log.is_attack_injected ? '#ff7b72' : '#7ee787' }}>
+            {log.is_attack_injected ? `[true: ${log.attack_type}]` : '[true: normal]'}
+          </span>
+          {' | '}src: {log.src_ip}
+          {' | '}service: {log.service}
+          {' | '}flag: {log.flag}
+          {' | '}{new Date(log.timestamp).toLocaleTimeString()}
           </div>
         ))}
       </div>

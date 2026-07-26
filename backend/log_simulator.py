@@ -1,24 +1,26 @@
 import random
 import time
+import pandas as pd
 from datetime import datetime
 
-# Realistic value pools, inspired by NSL-KDD feature ranges
-PROTOCOLS = ['tcp', 'udp', 'icmp']
-SERVICES = ['http', 'ftp_data', 'private', 'smtp', 'domain_u', 'other']
-NORMAL_FLAGS = ['SF']
+# Load real normal traffic samples (exported from actual NSL-KDD training data)
+normal_pool = pd.read_csv('models/normal_traffic_sample.csv')
+
 ATTACK_FLAGS = ['S0', 'REJ', 'RSTR']
 
 def generate_normal_log():
+    # Pick a random REAL normal row from the training data
+    sample = normal_pool.sample(1).iloc[0]
     return {
         "timestamp": datetime.now().isoformat(),
         "src_ip": f"192.168.1.{random.randint(2, 254)}",
-        "protocol_type": random.choice(PROTOCOLS),
-        "service": random.choice(SERVICES),
-        "flag": random.choice(NORMAL_FLAGS),
-        "src_bytes": random.randint(50, 2000),
-        "dst_bytes": random.randint(0, 5000),
-        "num_failed_logins": 0,
-        "serror_rate": round(random.uniform(0, 0.1), 2),
+        "protocol_type": sample['protocol_type'],
+        "service": sample['service'],
+        "flag": sample['flag'],
+        "src_bytes": int(sample['src_bytes']),
+        "dst_bytes": int(sample['dst_bytes']),
+        "num_failed_logins": int(sample['num_failed_logins']),
+        "serror_rate": float(sample['serror_rate']),
         "is_attack_injected": False,
         "attack_type": None
     }
@@ -43,7 +45,7 @@ def generate_port_scan_log():
         "timestamp": datetime.now().isoformat(),
         "src_ip": f"185.220.{random.randint(1,255)}.{random.randint(1,255)}",
         "protocol_type": "tcp",
-        "service": random.choice(SERVICES),
+        "service": random.choice(['http', 'private', 'domain_u', 'other']),
         "flag": "S0",
         "src_bytes": random.randint(0, 20),
         "dst_bytes": 0,
@@ -69,7 +71,6 @@ def generate_traffic_spike_log():
     }
 
 def generate_log_entry():
-    # 90% normal traffic, 10% attack (random type)
     roll = random.random()
     if roll < 0.90:
         return generate_normal_log()

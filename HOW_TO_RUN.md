@@ -4,6 +4,7 @@
 File → Open Folder → ai-soc-agent
 
 ## 2. Start Backend (Terminal 1)
+
 cd C:\Users\LOQ\OneDrive\Desktop\ai-soc-agent
 .\venv\Scripts\Activate.ps1
 cd backend
